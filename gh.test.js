@@ -36,12 +36,11 @@ describe("Booking",() => {
     expect(actual).toContain(expected);
   }, 30000);
 
-  test.only("Booking someone else's seat", async () => {
+  test("Booking someone else's seat", async () => {
     let row = 2;
     let place4 = 2;
     await clickElement(page,`div.buying-scheme__wrapper > div:nth-child(${row}) > span:nth-child(${place4})`);
-    const expected = await page.$eval("body > main > section > button",
-      (el) => el.classList.contains("disabled",true)
+    const expected = await page.$eval("body > main > section > button",(el) => el.disabled
     );
     expect(expected).toEqual(true);
   }, 30000);
