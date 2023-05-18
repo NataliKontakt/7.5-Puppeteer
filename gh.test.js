@@ -1,11 +1,11 @@
 const { clickElement, getText} = require("./lib/commands.js");
 let page;
 beforeEach(async () => {
-  let day = 4;
+  let day = 3;
   page = await browser.newPage();
   await page.goto("https://qamid.tmweb.ru/client/index.php"); 
   await clickElement(page, `body > nav > a:nth-child(${day}) > span.page-nav__day-week`);
-  await clickElement(page, "body > main > section > div.movie-seances__hall > ul > li > a");
+  await clickElement(page, "[data-seance-id='156']");
 }, 30000);
 
 afterEach(() => {
@@ -16,8 +16,7 @@ describe("Booking",() => {
     let row = 4;
     let place1 = 4;
     await clickElement(page,`div.buying-scheme__wrapper > div:nth-child(${row}) > span:nth-child(${place1})`);
-    await clickElement(page,"body > main > section > button");
-    await clickElement(page,"p.ticket__hint:nth-child(9)");
+    await clickElement(page,".acceptin-button");
     const actual = await getText(page,"h2");
     const expected = "Вы выбрали билеты:";
     expect(actual).toContain(expected);
@@ -29,8 +28,7 @@ describe("Booking",() => {
     let place3 = 6;
     await clickElement(page,`div.buying-scheme__wrapper > div:nth-child(${row}) > span:nth-child(${place2})`);
     await clickElement(page,`div.buying-scheme__wrapper > div:nth-child(${row}) > span:nth-child(${place3})`);
-    await clickElement(page,"body > main > section > button");
-    await clickElement(page,"p.ticket__hint:nth-child(9)");
+    await clickElement(page,".acceptin-button");
     const actual = await getText(page,"h2");
     const expected = "Вы выбрали билеты:";
     expect(actual).toContain(expected);
@@ -38,10 +36,16 @@ describe("Booking",() => {
 
   test("Booking someone else's seat", async () => {
     let row = 2;
-    let place4 = 2;
+    let place4 = 3;
+    let day = 3;
     await clickElement(page,`div.buying-scheme__wrapper > div:nth-child(${row}) > span:nth-child(${place4})`);
-    const expected = await page.$eval("body > main > section > button",(el) => el.disabled
+    await clickElement(page,".acceptin-button");
+    await clickElement(page,".acceptin-button");
+    await page.goto("https://qamid.tmweb.ru/client/index.php"); 
+    await clickElement(page, `body > nav > a:nth-child(${day}) > span.page-nav__day-week`);
+    await clickElement(page, "[data-seance-id='156']");
+    const button = await page.$eval(".acceptin-button",(el) => el.disabled
     );
-    expect(expected).toEqual(true);
+    expect(button).toEqual(true);
   }, 30000);
 })
